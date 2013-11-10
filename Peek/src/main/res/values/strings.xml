@@ -2,8 +2,7 @@
 <resources>
 
     <string name="app_name">Peek</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="peek_request">Peek Request</string>
+    <string name="add_contact">Add Contact</string>
 
 </resources>

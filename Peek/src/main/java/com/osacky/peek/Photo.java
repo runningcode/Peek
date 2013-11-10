@@ -4,16 +4,12 @@ import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
-/**
- * Created by Jonathan on 11/9/13.
- */
 @ParseClassName("Photo")
 public class Photo extends ParseObject{
     public Photo() {
         //default constructor
     }
 
-    //adapt for facebook api later
     public String getSender() {
         return getString("sender");
     }

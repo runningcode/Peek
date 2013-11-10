@@ -23,13 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RequestListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Map<String, String>> {
+public class RequestListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Map<String, Contact>> {
 
     private ContactsListAdapter contactsListAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        setRetainInstance(true);
         contactsListAdapter = new ContactsListAdapter(getActivity());
         setListAdapter(contactsListAdapter);
         getActivity().getSupportLoaderManager().initLoader(0, null, this).forceLoad();
@@ -39,15 +38,15 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     }
 
     @Override
-    public Loader<Map<String, String>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Map<String, Contact>> onCreateLoader(int i, Bundle bundle) {
         return new ContactListLoader(getActivity());
     }
 
     @Override
-    public void onLoadFinished(Loader<Map<String, String>> listLoader, final Map<String, String> contacts) {
+    public void onLoadFinished(Loader<Map<String, Contact>> listLoader, final Map<String, Contact> contacts) {
         if (contacts != null && !contacts.isEmpty()) {
             List<ParseQuery<ParseUser>> queries = new ArrayList<ParseQuery<ParseUser>>();
-            for (Map.Entry<String, String> entry : contacts.entrySet()) {
+            for (Map.Entry<String, Contact> entry : contacts.entrySet()) {
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("username", entry.getKey());
                 queries.add(query);
@@ -63,9 +62,8 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
                     } else {
                         contactsListAdapter.clear();
                         for (ParseUser parseUser : parseUsers) {
-                            String phone = parseUser.getUsername();
-                            String name = contacts.get(parseUser.getUsername());
-                            Contact contact = new Contact(name, phone, parseUser);
+                            Contact contact = contacts.get(parseUser.getUsername());
+                            contact.setUser(parseUser);
                             contactsListAdapter.add(contact);
                         }
                         if (isResumed()) {
@@ -102,7 +100,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<Map<String, String>> listLoader) {
+    public void onLoaderReset(Loader<Map<String, Contact>> listLoader) {
 
     }
 }

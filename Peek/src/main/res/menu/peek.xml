@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".PeekActivity" >
     
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_add"
+        android:title="@string/add_contact"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="always"
+        android:icon="@drawable/add_contact"/>
 </menu>
