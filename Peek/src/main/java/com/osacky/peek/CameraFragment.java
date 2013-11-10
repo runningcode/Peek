@@ -36,16 +36,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
         setRetainInstance(true);
         View v = inflater.inflate(R.layout.camera_fragment, parent, false);
 
-       /* if (camera == null) {
-            try {
-                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
-            } catch (Exception e) {
-                Log.e(TAG, "No camera with exception: " + e.getMessage());
-                Toast.makeText(getActivity(), "No camera detected",
-                        Toast.LENGTH_LONG).show();
-            }
-        }*/
-
         surfaceView = (SurfaceView) v.findViewById(R.id.surface_view);
         surfaceView.setOnClickListener(this);
 
@@ -77,17 +67,21 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
                 0, mealImage.getWidth(), mealImage.getHeight(),
                 matrix, true);
 
+        mealImage.recycle();
+
         Bitmap mealImageScaled = Bitmap.createScaledBitmap(rotatedScaledMealImage, 600, 300
                 , false);
+
+        rotatedScaledMealImage.recycle();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         mealImageScaled.compress(Bitmap.CompressFormat.JPEG, 90, bos);
 
         byte[] scaledData = bos.toByteArray();
+        mealImageScaled.recycle();
 
         // Save the scaled image to Parse
         String fileName = "top.jpg";
-        mealImage.recycle();
 
         photoFile = new ParseFile(fileName, scaledData);
         photoFile.saveInBackground(new SaveCallback() {
