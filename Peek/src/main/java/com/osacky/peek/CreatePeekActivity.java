@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.osacky.peek.Models.Photo;
 import com.parse.ParseAnalytics;
 import com.parse.ParseUser;
 
@@ -51,6 +52,7 @@ public class CreatePeekActivity extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         if (photo.getPhotoFile() != null) {
+            photo.setTime(System.currentTimeMillis());
             photo.saveInBackground();
         }
     }

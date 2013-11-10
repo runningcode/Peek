@@ -37,9 +37,8 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
             Intent peekIntent = new Intent(context, CreatePeekActivity.class);
             peekIntent.putExtra("username", username);
             peekIntent.putExtra("time", time);
-            peekIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, peekIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, peekIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.notification)

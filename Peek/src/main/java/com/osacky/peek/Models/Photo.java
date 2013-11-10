@@ -1,4 +1,4 @@
-package com.osacky.peek;
+package com.osacky.peek.Models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -24,6 +24,14 @@ public class Photo extends ParseObject{
 
     public void setReceiver(String receiver) {
         put("receiver", receiver);
+    }
+
+    public Long getTime() {
+        return getLong("time");
+    }
+
+    public void setTime(long time) {
+        put("time", time);
     }
 
     public ParseFile getPhotoFile() {

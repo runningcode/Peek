@@ -3,6 +3,7 @@ package com.osacky.peek;
 import android.app.Application;
 import android.os.Build;
 
+import com.osacky.peek.Models.Photo;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;

@@ -1,7 +1,12 @@
 package com.osacky.peek;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +18,8 @@ import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+import java.util.Locale;
+
 public class PeekActivity extends ActionBarActivity {
 
     @Override
@@ -23,13 +30,12 @@ public class PeekActivity extends ActionBarActivity {
         ParseAnalytics.trackAppOpened(getIntent());
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+
         final String username = Utils.getUserPhoneNumber(getApplicationContext());
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new RequestListFragment())
-                    .commit();
-        }
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
         parseInstallation.put("username", username);
         parseInstallation.saveInBackground();
@@ -59,8 +65,42 @@ public class PeekActivity extends ActionBarActivity {
         }
     }
 
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new RequestListFragment();
+                case 1:
+                    return new PhotoListFragment();
+                default:
+                    // this should never happen
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Locale l = Locale.getDefault();
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_section1).toUpperCase(l);
+                case 1:
+                    return getString(R.string.title_section2).toUpperCase(l);
+            }
+            return null;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,6 +121,15 @@ public class PeekActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            // If a new post has been added, update
+            // the list of posts
+            //updateMealList();
+        }
     }
 
 

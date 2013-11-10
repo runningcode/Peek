@@ -5,4 +5,7 @@
     <string name="peek_request">Peek Request</string>
     <string name="add_contact">Add Contact</string>
 
+    <string name="title_section1">Request</string>
+    <string name="title_section2">Peeks</string>
+
 </resources>
