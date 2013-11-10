@@ -7,7 +7,6 @@ import com.osacky.peek.Models.Photo;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
-import com.parse.ParseUser;
 
 public class PhotoListFragment extends ListFragment {
 
@@ -23,7 +22,7 @@ public class PhotoListFragment extends ListFragment {
                     @Override
                     public ParseQuery<ParseObject> create() {
                         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Photo");
-                        query.whereEqualTo("receiver", ParseUser.getCurrentUser().getUsername());
+                        query.whereEqualTo("receiver", Utils.getUserPhoneNumber(getActivity()));
                         return query;
                     }
                 };

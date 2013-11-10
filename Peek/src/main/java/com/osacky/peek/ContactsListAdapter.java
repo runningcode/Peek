@@ -30,7 +30,9 @@ public class ContactsListAdapter extends ArrayAdapter<Contact> {
         if (contact != null) {
             ImageView imageView = (ImageView) convertView.findViewById(R.id.image);
             TextView textView = (TextView) convertView.findViewById(R.id.name);
-            imageView.setImageURI(Uri.parse(contact.getPhotoURI()));
+            if (contact.getPhotoURI() != null) {
+                imageView.setImageURI(Uri.parse(contact.getPhotoURI()));
+            }
             textView.setText(contact.getName());
         }
         return convertView;

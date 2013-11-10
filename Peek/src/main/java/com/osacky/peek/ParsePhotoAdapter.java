@@ -52,7 +52,9 @@ public class ParsePhotoAdapter extends ParseQueryAdapter<Photo> {
             contactMap = new Gson().fromJson(sharedPreferences.getString("contactsMap", ""), type);
             if (contactMap.containsKey(sender)) {
                 Contact contact = contactMap.get(sender);
-                senderImage.setImageURI(Uri.parse(contact.getPhotoURI()));
+                if (contact.getPhotoURI() != null) {
+                    senderImage.setImageURI(Uri.parse(contact.getPhotoURI()));
+                }
                 textView.setText(contact.getName());
 
             }
