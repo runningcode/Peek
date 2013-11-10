@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -24,25 +25,42 @@ public class PeekActivity extends ActionBarActivity {
         if (currentUser != null) {
             // user is already logged in
             if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new RequestListFragment())
-                    .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.container, new RequestListFragment())
+                        .commit();
             }
+            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+            parseInstallation.put("username", currentUser.getUsername());
+            parseInstallation.saveEventually();
         } else {
             ParseUser user = new ParseUser();
-            user.setUsername(Utils.getUserPhoneNumber(getApplicationContext()));
-            user.setPassword("aaaa");
-            user.signUpInBackground(new SignUpCallback() {
-                public void done(ParseException e) {
-                    if (e == null) {
-
-                        // Hooray! Let them use the app now.
-                    } else {
-                        // Sign up failed
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            final String username = Utils.getUserPhoneNumber(getApplicationContext());
+            try {
+                ParseUser.logIn(username, "aaaa");
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.container, new RequestListFragment())
+                        .commit();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                user.setUsername(username);
+                user.setPassword("aaaa");
+                user.signUpInBackground(new SignUpCallback() {
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            // Hooray! Let them use the app now.
+                            getSupportFragmentManager().beginTransaction()
+                                    .add(R.id.container, new RequestListFragment())
+                                    .commit();
+                            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+                            parseInstallation.put("username", username);
+                            parseInstallation.saveEventually();
+                        } else {
+                            // Sign up failed
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
     }

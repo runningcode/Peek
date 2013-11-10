@@ -5,12 +5,19 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 
 import com.osacky.peek.Models.Contact;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +53,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
                 queries.add(query);
             }
             ParseQuery<ParseUser> mainQuery = ParseQuery.or(queries);
-            //mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+            mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
             mainQuery.findInBackground(new FindCallback<ParseUser>() {
                 @Override
                 public void done(List<ParseUser> parseUsers, ParseException e) {
@@ -70,6 +77,28 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
                 }
             });
         }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        ParseUser parseUser = contactsListAdapter.getItem(position).getUser();
+
+        ParseQuery<ParseInstallation> parseInstallationQuary = ParseInstallation.getQuery();
+        parseInstallationQuary.whereEqualTo("username", parseUser.getUsername());
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("action", "com.osacky.peek.create");
+            data.put("username", ParseUser.getCurrentUser().getUsername());
+            data.put("time", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ParsePush push = new ParsePush();
+        push.setQuery(parseInstallationQuary);
+        push.setData(data);
+        push.sendInBackground();
     }
 
     @Override

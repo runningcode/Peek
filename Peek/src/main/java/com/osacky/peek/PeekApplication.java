@@ -21,6 +21,6 @@ public class PeekApplication extends Application {
         parseInstallation.put("modelNumber", Build.MODEL);
         parseInstallation.put("serial", Build.SERIAL);
         parseInstallation.put("deviceName", Build.MANUFACTURER + " " + Build.PRODUCT);
-        parseInstallation.saveInBackground();
+        parseInstallation.saveEventually();
     }
 }

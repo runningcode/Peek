@@ -35,11 +35,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CreatePeekActivity"
+            android:parentActivityName="com.osacky.peek.PeekActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.osacky.peek.PeekActivity" />
+        </activity>
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".PeekBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.osacky.peek.create" />
             </intent-filter>
         </receiver>
     </application>
