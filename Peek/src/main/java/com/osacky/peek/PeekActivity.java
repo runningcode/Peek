@@ -8,8 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class PeekActivity extends ActionBarActivity {
 
@@ -18,16 +20,33 @@ public class PeekActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_peek);
 
-        Parse.initialize(this, "NXIHRKwZCV2JAdSLCCPajcnbBLVBrUj2ZPJ1JBO1",
-                "EgULt8COdAe47MCMZ1HtvjnFtDttMBCZr5a9ITbF");
+        ParseAnalytics.trackAppOpened(getIntent());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new RequestListFragment())
                     .commit();
         }
 
-        ParseAnalytics.trackAppOpened(getIntent());
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            // user is already logged in
+        } else {
+            ParseUser user = new ParseUser();
+            user.setUsername(Utils.getUserPhoneNumber(getApplicationContext()));
+            user.setPassword("aaaa");
+            user.signUpInBackground(new SignUpCallback() {
+                public void done(ParseException e) {
+                    if (e == null) {
+                        // Hooray! Let them use the app now.
+                    } else {
+                        // Sign up didn't succeed. Look at the ParseException
+                        // to figure out what went wrong
+                    }
+                }
+            });
+        }
+
     }
 
 
@@ -50,21 +69,4 @@ public class PeekActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_peek, container, false);
-            return rootView;
-        }
-    }
-
 }
