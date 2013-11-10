@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
@@ -19,15 +20,14 @@ public class PeekActivity extends ActionBarActivity {
 
         ParseAnalytics.trackAppOpened(getIntent());
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new RequestListFragment())
-                    .commit();
-        }
-
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
             // user is already logged in
+            if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new RequestListFragment())
+                    .commit();
+            }
         } else {
             ParseUser user = new ParseUser();
             user.setUsername(Utils.getUserPhoneNumber(getApplicationContext()));
@@ -35,10 +35,11 @@ public class PeekActivity extends ActionBarActivity {
             user.signUpInBackground(new SignUpCallback() {
                 public void done(ParseException e) {
                     if (e == null) {
+
                         // Hooray! Let them use the app now.
                     } else {
-                        // Sign up didn't succeed. Look at the ParseException
-                        // to figure out what went wrong
+                        // Sign up failed
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

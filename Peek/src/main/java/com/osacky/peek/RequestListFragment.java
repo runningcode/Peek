@@ -23,11 +23,11 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         setRetainInstance(true);
-        setListShown(false);
-        setEmptyText("No friends are on Peek");
         contactsListAdapter = new ContactsListAdapter(getActivity());
         setListAdapter(contactsListAdapter);
         getActivity().getSupportLoaderManager().initLoader(0, null, this).forceLoad();
+        setListShown(false);
+        setEmptyText("No friends are on Peek");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -46,7 +46,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
                 queries.add(query);
             }
             ParseQuery<ParseUser> mainQuery = ParseQuery.or(queries);
-            mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+            //mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
             mainQuery.findInBackground(new FindCallback<ParseUser>() {
                 @Override
                 public void done(List<ParseUser> parseUsers, ParseException e) {
