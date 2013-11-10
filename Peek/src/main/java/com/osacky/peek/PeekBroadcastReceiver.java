@@ -62,6 +62,8 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
                         builder.setLargeIcon(userImage);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
                 }
             }

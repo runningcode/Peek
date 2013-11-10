@@ -18,6 +18,7 @@ import com.osacky.peek.Models.Contact;
 import com.osacky.peek.Models.Photo;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQueryAdapter;
 
 import java.lang.reflect.Type;
@@ -60,14 +61,16 @@ public class ParsePhotoAdapter extends ParseQueryAdapter<Photo> {
             }
         }
 
-
-        object.getPhotoFile().getDataInBackground(new GetDataCallback() {
-            @Override
-            public void done(byte[] bytes, ParseException e) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                imageView.setImageBitmap(bitmap);
-            }
-        });
+        ParseFile top = object.getTop();
+        if (top != null) {
+            top.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    imageView.setImageBitmap(bitmap);
+                }
+            });
+        }
         return v;
     }
 }

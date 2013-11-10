@@ -34,11 +34,19 @@ public class Photo extends ParseObject{
         put("time", time);
     }
 
-    public ParseFile getPhotoFile() {
-        return getParseFile("photo");
+    public ParseFile getTop() {
+        return getParseFile("topImage");
     }
 
-    public void setPhotoFile(ParseFile file) {
-        put("photo", file);
+    public void setTop(ParseFile file) {
+        put("topImage", file);
+    }
+
+    public ParseFile getBottom() {
+        return getParseFile("bottomImage");
+    }
+
+    public void setBottom(ParseFile file) {
+        put("bottomImage", file);
     }
 }

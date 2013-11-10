@@ -1,8 +1,5 @@
 package com.osacky.peek;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -22,7 +19,10 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
-public class CameraFragment extends Fragment implements View.OnClickListener, Callback {
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+public class FrontCameraFragment extends Fragment implements View.OnClickListener, Callback {
 
     public static final String TAG = "CameraFragment";
 
@@ -38,7 +38,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
 
         if (camera == null) {
             try {
-                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
             } catch (Exception e) {
                 Log.e(TAG, "No camera with exception: " + e.getMessage());
                 Toast.makeText(getActivity(), "No camera detected",
@@ -61,10 +61,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
      */
 
     private void saveScaledPhoto(byte[] data) {
-        surfaceView.setOnClickListener(null);
-        surfaceView.getHolder().removeCallback(this);
         camera.stopPreview();
         camera.release();
+        surfaceView.setOnClickListener(null);
+        surfaceView.getHolder().removeCallback(this);
         camera = null;
         // Resize photo from camera byte array
         Bitmap mealImage = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -84,7 +84,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
         byte[] scaledData = bos.toByteArray();
 
         // Save the scaled image to Parse
-        String fileName = "top.jpg";
+        String fileName = "bottom.jpg";
 
         photoFile = new ParseFile(fileName, scaledData);
         photoFile.saveInBackground(new SaveCallback() {
@@ -95,10 +95,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
                             "Error saving: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 } else {
-                    ((CreatePeekActivity) getActivity()).getCurrentPhoto().setTop(
+                    ((CreatePeekActivity) getActivity()).getCurrentPhoto().setBottom(
                             photoFile);
-                    getActivity().getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
-                    ((CreatePeekActivity) getActivity()).swapCamera();
+                    getActivity().getSupportFragmentManager().beginTransaction().remove(FrontCameraFragment.this).commit();
+                    getActivity().finish();
                 }
             }
         });
