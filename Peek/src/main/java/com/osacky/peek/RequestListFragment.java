@@ -83,8 +83,8 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     public void onListItemClick(ListView l, View v, int position, long id) {
         ParseUser parseUser = contactsListAdapter.getItem(position).getUser();
 
-        ParseQuery<ParseInstallation> parseInstallationQuary = ParseInstallation.getQuery();
-        parseInstallationQuary.whereEqualTo("username", parseUser.getUsername());
+        ParseQuery<ParseInstallation> parseInstallationQuery = ParseInstallation.getQuery();
+        parseInstallationQuery.whereEqualTo("username", parseUser.getUsername());
 
         JSONObject data = new JSONObject();
         try {
@@ -96,7 +96,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
         }
 
         ParsePush push = new ParsePush();
-        push.setQuery(parseInstallationQuary);
+        push.setQuery(parseInstallationQuery);
         push.setData(data);
         push.sendInBackground();
     }
