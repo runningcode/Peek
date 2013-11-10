@@ -11,7 +11,13 @@ import android.widget.ImageView;
 
 import com.osacky.peek.Models.Photo;
 import com.parse.ParseAnalytics;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CreatePeekActivity extends FragmentActivity {
 
@@ -56,6 +62,23 @@ public class CreatePeekActivity extends FragmentActivity {
         if (photo.getTop() != null && photo.getBottom() != null) {
             photo.setTime(System.currentTimeMillis());
             photo.saveInBackground();
+
+            ParseQuery<ParseInstallation> parseInstallationQuery = ParseInstallation.getQuery();
+            parseInstallationQuery.whereEqualTo("username", photo.getReceiver());
+
+            JSONObject data = new JSONObject();
+            try {
+                data.put("action", "com.osacky.peek.received");
+                data.put("username", ParseUser.getCurrentUser().getUsername());
+                data.put("time", System.currentTimeMillis());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            ParsePush push = new ParsePush();
+            push.setQuery(parseInstallationQuery);
+            push.setData(data);
+            push.sendInBackground();
         }
     }
 
@@ -71,6 +94,7 @@ public class CreatePeekActivity extends FragmentActivity {
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.top);
         frameLayout.removeAllViews();
         ImageView imageView = new ImageView(this);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageBitmap(top);
         frameLayout.addView(imageView);
         getSupportFragmentManager().beginTransaction().add(R.id.bottom, new FrontCameraFragment()).commit();

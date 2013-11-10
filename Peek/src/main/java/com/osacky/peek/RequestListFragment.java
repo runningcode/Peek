@@ -5,6 +5,8 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
 
@@ -97,10 +99,12 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
         push.setQuery(parseInstallationQuery);
         push.setData(data);
         push.sendInBackground();
+
+        v.setBackgroundResource(R.color.green);
     }
 
     @Override
     public void onLoaderReset(Loader<Map<String, Contact>> listLoader) {
-
     }
+
 }

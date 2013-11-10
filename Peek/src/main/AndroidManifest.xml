@@ -55,6 +55,11 @@
                 <action android:name="com.osacky.peek.create" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".PeekReceivedReceiver">
+            <intent-filter>
+                <action android:name="com.osacky.peek.received" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

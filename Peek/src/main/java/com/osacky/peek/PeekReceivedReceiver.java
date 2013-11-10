@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class PeekBroadcastReceiver extends BroadcastReceiver {
+public class PeekReceivedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,7 +34,7 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
             String username = jsonObject.getString("username");
             Long time = jsonObject.getLong("time");
 
-            Intent peekIntent = new Intent(context, CreatePeekActivity.class);
+            Intent peekIntent = new Intent(context, PeekActivity.class);
             peekIntent.putExtra("username", username);
             peekIntent.putExtra("time", time);
 
@@ -42,11 +42,10 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.notification)
-                    .setContentTitle(context.getString(R.string.peek_request))
+                    .setContentTitle("You got a peek!")
                     .setContentText(username)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.ic_menu_send, "Let's do this!", pendingIntent)
                     .setAutoCancel(true);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

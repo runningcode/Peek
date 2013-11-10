@@ -3,6 +3,7 @@ package com.osacky.peek;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -116,7 +117,8 @@ public class PeekActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add) {
-            Intent intent = new Intent(this, CreatePeekActivity.class);
+            Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+            intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
             startActivity(intent);
             return true;
         }

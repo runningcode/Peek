@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".PeekActivity" >
+    
+    <item android:id="@+id/action_refresh"
+        android:title="Refresh"
+        android:orderInCategory="10"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_zoom"/>
+</menu>

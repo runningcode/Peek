@@ -68,8 +68,6 @@ public class FrontCameraFragment extends Fragment implements View.OnClickListene
         camera = null;
         // Resize photo from camera byte array
         Bitmap mealImage = BitmapFactory.decodeByteArray(data, 0, data.length);
-        //Bitmap mealImageScaled = Bitmap.createScaledBitmap(mealImage, 400, 400
-        //* mealImage.getHeight() / mealImage.getWidth(), false);
 
         // Override Android default landscape orientation and save portrait
         Matrix matrix = new Matrix();
@@ -78,10 +76,15 @@ public class FrontCameraFragment extends Fragment implements View.OnClickListene
                 0, mealImage.getWidth(), mealImage.getHeight(),
                 matrix, true);
 
+        Bitmap mealImageScaled = Bitmap.createScaledBitmap(rotatedScaledMealImage, 600, 300
+                , false);
+
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        rotatedScaledMealImage.compress(Bitmap.CompressFormat.JPEG, 90, bos);
+        mealImageScaled.compress(Bitmap.CompressFormat.JPEG, 90, bos);
 
         byte[] scaledData = bos.toByteArray();
+        mealImage.recycle();
 
         // Save the scaled image to Parse
         String fileName = "bottom.jpg";
