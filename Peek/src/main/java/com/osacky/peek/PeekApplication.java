@@ -23,7 +23,7 @@ public class PeekApplication extends Application {
         ParseObject.registerSubclass(Photo.class);
         Parse.initialize(this, appID, clientKey);
 
-        PushService.setDefaultPushCallback(this, CreatePeekActivity.class);
+        PushService.setDefaultPushCallback(this, PeekActivity.class);
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
         parseInstallation.put("modelNumber", Build.MODEL);
         parseInstallation.put("serial", Build.SERIAL);
