@@ -1,13 +1,10 @@
 package com.osacky.peek.Models;
 
-import com.parse.ParseUser;
-
-
 public class Contact {
 
     final private String name;
     final private String phone;
-    private ParseUser user;
+    private Person person;
     private String photoURI;
 
     public Contact(String name, String phone) {
@@ -23,12 +20,12 @@ public class Contact {
         return phone;
     }
 
-    public void setUser(ParseUser user) {
-        this.user = user;
+    public void setUser(Person person) {
+        this.person = person;
     }
 
-    public ParseUser getUser() {
-        return user;
+    public Person getPerson() {
+        return person;
     }
 
     public String getPhotoURI() {

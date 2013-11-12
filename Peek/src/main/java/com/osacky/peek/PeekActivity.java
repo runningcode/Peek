@@ -1,6 +1,5 @@
 package com.osacky.peek;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -11,14 +10,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.osacky.peek.Models.Person;
+import com.parse.FindCallback;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
+import com.parse.ParseQuery;
 
+import java.util.List;
 import java.util.Locale;
 
 public class PeekActivity extends ActionBarActivity {
@@ -35,35 +35,26 @@ public class PeekActivity extends ActionBarActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(sectionsPagerAdapter);
 
-        final String username = Utils.getUserPhoneNumber(getApplicationContext());
+        final String phoneNumber = Utils.getUserPhoneNumber(getApplicationContext());
 
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
-        parseInstallation.put("username", username);
-        parseInstallation.saveInBackground();
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
-            // user is already logged in
-        } else {
-            try {
-                ParseUser.logIn(username, "aaaa");
-            } catch (ParseException e) {
-                e.printStackTrace();
-                ParseUser user = new ParseUser();
-                user.setUsername(username);
-                user.setPassword("aaaa");
-                user.setEmail(Utils.getUserEmail(getApplicationContext()));
-                user.signUpInBackground(new SignUpCallback() {
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            // Hooray! Let them use the app now.
-                        } else {
-                            // Sign up failed
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+        parseInstallation.put("username", phoneNumber);
+        parseInstallation.saveEventually();
+
+        ParseQuery<Person> query = ParseQuery.getQuery(Person.class);
+        query.whereEqualTo("phone", phoneNumber);
+        query.findInBackground(new FindCallback<Person>() {
+            @Override
+            public void done(List<Person> persons, ParseException e) {
+                if (e != null) {
+                    if (persons.isEmpty()) {
+                        Person person = new Person();
+                        person.setPhone(phoneNumber);
+                        person.saveEventually();
                     }
-                });
+                }
             }
-        }
+        });
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -124,15 +115,4 @@ public class PeekActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            // If a new post has been added, update
-            // the list of posts
-            //updateMealList();
-        }
-    }
-
-
 }

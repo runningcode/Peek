@@ -12,17 +12,35 @@ public class Utils {
 
     public static String getUserPhoneNumber(Context context) {
         TelephonyManager telephonyManager =(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        return telephonyManager.getLine1Number().replaceAll("\\D", "");
+        String phone = telephonyManager.getLine1Number();
+        if (phone == null) {
+            return null;
+        }
+        return formatPhone(telephonyManager.getLine1Number());
     }
 
     public static String getUserEmail(Context context) {
         Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-        Account[] accounts = AccountManager.get(context).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                return account.name;
+        AccountManager accountManager = AccountManager.get(context);
+        if (accountManager != null) {
+            for (Account account : accountManager.getAccounts()) {
+                if (emailPattern.matcher(account.name).matches()) {
+                    return account.name;
+                }
             }
         }
         return null;
+    }
+
+    public static String formatPhone(String phone) {
+        if (phone == null) {
+            return null;
+        }
+        phone = phone.replaceAll("\\D", "");
+        if (phone.startsWith("1")) {
+            return phone.substring(1);
+        } else {
+            return phone;
+        }
     }
 }

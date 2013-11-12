@@ -22,23 +22,23 @@ import com.parse.ParseFile;
 import com.parse.ParseQueryAdapter;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 public class ParsePhotoAdapter extends ParseQueryAdapter<Photo> {
 
     private LayoutInflater layoutInflater;
     private SharedPreferences sharedPreferences;
 
-    private Map<String, Bitmap> topMap;
-    private Map<String, Bitmap> bottomMap;
+    private WeakHashMap<Long, Bitmap> topMap;
+    private WeakHashMap<Long, Bitmap> bottomMap;
 
     public ParsePhotoAdapter(Context context, QueryFactory queryFactory) {
         super(context, queryFactory);
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        topMap = new HashMap<String, Bitmap>();
-        bottomMap = new HashMap<String, Bitmap>();
+        topMap = new WeakHashMap<Long, Bitmap>();
+        bottomMap = new WeakHashMap<Long, Bitmap>();
     }
 
     @Override

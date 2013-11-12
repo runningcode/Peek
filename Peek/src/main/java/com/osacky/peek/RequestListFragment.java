@@ -4,28 +4,21 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
 
 import com.osacky.peek.Models.Contact;
-import com.parse.FindCallback;
-import com.parse.ParseException;
+import com.osacky.peek.Models.Person;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class RequestListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Map<String, Contact>> {
+public class RequestListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<Contact>> {
 
     private ContactsListAdapter contactsListAdapter;
 
@@ -40,56 +33,32 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     }
 
     @Override
-    public Loader<Map<String, Contact>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<Contact>> onCreateLoader(int i, Bundle bundle) {
         return new ContactListLoader(getActivity());
     }
 
     @Override
-    public void onLoadFinished(Loader<Map<String, Contact>> listLoader, final Map<String, Contact> contacts) {
-        if (contacts != null && !contacts.isEmpty()) {
-            List<ParseQuery<ParseUser>> queries = new ArrayList<ParseQuery<ParseUser>>();
-            for (Map.Entry<String, Contact> entry : contacts.entrySet()) {
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                query.whereEqualTo("username", entry.getKey());
-                queries.add(query);
-            }
-            ParseQuery<ParseUser> mainQuery = ParseQuery.or(queries);
-            mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
-            mainQuery.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> parseUsers, ParseException e) {
-                    if (parseUsers == null) {
-                        Log.i("TAG", String.valueOf(e.getCode()));
-                        e.printStackTrace();
-                    } else {
-                        contactsListAdapter.clear();
-                        for (ParseUser parseUser : parseUsers) {
-                            Contact contact = contacts.get(parseUser.getUsername());
-                            contact.setUser(parseUser);
-                            contactsListAdapter.add(contact);
-                        }
-                        if (isResumed()) {
-                            setListShown(true);
-                        } else {
-                            setListShownNoAnimation(true);
-                        }
-                    }
-                }
-            });
+    public void onLoadFinished(Loader<List<Contact>> listLoader, List<Contact> contacts) {
+        contactsListAdapter.setData(contacts);
+        if (isResumed()) {
+            setListShown(true);
+        } else {
+            setListShownNoAnimation(true);
         }
+
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        ParseUser parseUser = contactsListAdapter.getItem(position).getUser();
+        Person person = contactsListAdapter.getItem(position).getPerson();
 
         ParseQuery<ParseInstallation> parseInstallationQuery = ParseInstallation.getQuery();
-        parseInstallationQuery.whereEqualTo("username", parseUser.getUsername());
+        parseInstallationQuery.whereEqualTo("username", person.getName());
 
         JSONObject data = new JSONObject();
         try {
             data.put("action", "com.osacky.peek.create");
-            data.put("username", ParseUser.getCurrentUser().getUsername());
+            data.put("username", Utils.getUserPhoneNumber(getActivity()));
             data.put("time", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -104,7 +73,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<Map<String, Contact>> listLoader) {
+    public void onLoaderReset(Loader<List<Contact>> listLoader) {
     }
 
 }

@@ -14,7 +14,6 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +22,7 @@ public class CreatePeekActivity extends FragmentActivity {
 
     private Photo photo;
     private Bitmap top;
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,8 @@ public class CreatePeekActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_activity);
         ParseAnalytics.trackAppOpened(getIntent());
+
+        phone = Utils.getUserPhoneNumber(getApplicationContext());
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -46,7 +48,7 @@ public class CreatePeekActivity extends FragmentActivity {
                 .add(R.id.top, new CameraFragment())
                 .commit();
 
-        photo.setSender(ParseUser.getCurrentUser().getUsername());
+        photo.setSender(phone);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String receiver = extras.getString("username", "");
@@ -69,7 +71,7 @@ public class CreatePeekActivity extends FragmentActivity {
             JSONObject data = new JSONObject();
             try {
                 data.put("action", "com.osacky.peek.received");
-                data.put("username", ParseUser.getCurrentUser().getUsername());
+                data.put("username", phone);
                 data.put("time", System.currentTimeMillis());
             } catch (JSONException e) {
                 e.printStackTrace();

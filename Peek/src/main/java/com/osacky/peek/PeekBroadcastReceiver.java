@@ -46,7 +46,6 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
                     .setContentText(username)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.ic_menu_send, "Let's do this!", pendingIntent)
                     .setAutoCancel(true);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

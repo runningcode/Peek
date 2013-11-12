@@ -6,16 +6,23 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.osacky.peek.Models.Contact;
+import com.osacky.peek.Models.Person;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class ContactListLoader extends AsyncTaskLoader<Map<String, Contact>> {
+public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
 
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -26,12 +33,18 @@ public class ContactListLoader extends AsyncTaskLoader<Map<String, Contact>> {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
     @Override
-    public Map<String, Contact> loadInBackground() {
+    public List<Contact> loadInBackground() {
         Gson gson = new Gson();
-        if (sharedPreferences.contains("contactsMap")) {
-            Type type = new TypeToken<Map<String, Contact>>(){}.getType();
-            return gson.fromJson(sharedPreferences.getString("contactsMap", ""), type);
+        if (sharedPreferences.contains("time")) {
+            if ((System.currentTimeMillis() - sharedPreferences.getLong("time", -1)) <  TimeUnit.HOURS.toMillis(1)) {
+                if (sharedPreferences.contains("contactsMap")) {
+                    Type type = new TypeToken<Map<String, Contact>>(){}.getType();
+                    Map<String, Contact> contactMap = gson.fromJson(sharedPreferences.getString("contactsMap", ""), type);
+                    return getParseQuery(contactMap);
+                }
+            }
         }
+
         Map<String, Contact> contacts = new HashMap<String, Contact>();
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         if (phones == null) {
@@ -45,7 +58,7 @@ public class ContactListLoader extends AsyncTaskLoader<Map<String, Contact>> {
             if (phoneNumber == null || name == null) {
                 continue;
             }
-            phoneNumber = phoneNumber.replaceAll("\\D", "");
+            phoneNumber = Utils.formatPhone(phoneNumber);
             Contact contact = new Contact(name, phoneNumber);
             if (photoURI != null) {
                 contact.setPhotoURI(photoURI);
@@ -58,6 +71,33 @@ public class ContactListLoader extends AsyncTaskLoader<Map<String, Contact>> {
         editor.putString("contactsMap", gson.toJson(contacts));
         editor.commit();
 
-        return contacts;
+        return getParseQuery(contacts);
+    }
+
+    private List<Contact> getParseQuery(final Map<String, Contact> contactMap) {
+        if (contactMap != null && !contactMap.isEmpty()) {
+            List<ParseQuery<Person>> queries = new ArrayList<ParseQuery<Person>>();
+            for (Map.Entry<String, Contact> entry : contactMap.entrySet()) {
+                ParseQuery<Person> query = ParseQuery.getQuery(Person.class);
+                query.whereEqualTo("phone", entry.getKey());
+                queries.add(query);
+            }
+            ParseQuery<Person> mainQuery = ParseQuery.or(queries);
+            mainQuery.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+            ArrayList<Contact> contacts = new ArrayList<Contact>();
+            try {
+                List<Person> people = mainQuery.find();
+                for (Person person : people) {
+                    Contact contact = contactMap.get(person.getPhone());
+                    contact.setUser(person);
+                    contacts.add(contact);
+                }
+                return contacts;
+            } catch (ParseException e) {
+                Log.i("TAG", String.valueOf(e.getCode()));
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

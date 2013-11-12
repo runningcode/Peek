@@ -61,9 +61,9 @@ public class FrontCameraFragment extends Fragment implements View.OnClickListene
      */
 
     private void saveScaledPhoto(byte[] data) {
+        surfaceView.setOnClickListener(null);
         camera.stopPreview();
         camera.release();
-        surfaceView.setOnClickListener(null);
         surfaceView.getHolder().removeCallback(this);
         camera = null;
         // Resize photo from camera byte array
@@ -84,7 +84,6 @@ public class FrontCameraFragment extends Fragment implements View.OnClickListene
         mealImageScaled.compress(Bitmap.CompressFormat.JPEG, 90, bos);
 
         byte[] scaledData = bos.toByteArray();
-        mealImage.recycle();
 
         // Save the scaled image to Parse
         String fileName = "bottom.jpg";

@@ -67,18 +67,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
                 0, mealImage.getWidth(), mealImage.getHeight(),
                 matrix, true);
 
-        mealImage.recycle();
-
         Bitmap mealImageScaled = Bitmap.createScaledBitmap(rotatedScaledMealImage, 600, 300
                 , false);
-
-        rotatedScaledMealImage.recycle();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         mealImageScaled.compress(Bitmap.CompressFormat.JPEG, 90, bos);
 
         byte[] scaledData = bos.toByteArray();
-        mealImageScaled.recycle();
 
         // Save the scaled image to Parse
         String fileName = "top.jpg";
@@ -163,12 +158,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
     }
 }
 

@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.osacky.peek.Models.Contact;
 
+import java.util.List;
+
 public class ContactsListAdapter extends ArrayAdapter<Contact> {
     private LayoutInflater layoutInflater;
 
@@ -36,5 +38,14 @@ public class ContactsListAdapter extends ArrayAdapter<Contact> {
             textView.setText(contact.getName());
         }
         return convertView;
+    }
+
+    public void setData(List<Contact> contacts) {
+        if (contacts != null) {
+            clear();
+            for (Contact contact : contacts) {
+                add(contact);
+            }
+        }
     }
 }

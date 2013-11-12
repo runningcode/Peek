@@ -6,6 +6,7 @@ import com.parse.ParseObject;
 
 @ParseClassName("Photo")
 public class Photo extends ParseObject{
+
     public Photo() {
         //default constructor
     }
