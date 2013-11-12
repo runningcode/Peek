@@ -60,6 +60,11 @@
                 <action android:name="com.osacky.peek.received" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".SystemMessageBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.osacky.peek.message" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

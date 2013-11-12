@@ -44,6 +44,7 @@ public class PeekReceivedReceiver extends BroadcastReceiver {
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle("You got a peek!")
                     .setContentText(username)
+                    .setTicker("You got a peek from " + username)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);

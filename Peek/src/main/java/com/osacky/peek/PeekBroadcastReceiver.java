@@ -44,6 +44,7 @@ public class PeekBroadcastReceiver extends BroadcastReceiver {
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(context.getString(R.string.peek_request))
                     .setContentText(username)
+                    .setTicker(context.getText(R.string.peek_request) + " from " + username)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
