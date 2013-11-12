@@ -53,7 +53,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
         Person person = contactsListAdapter.getItem(position).getPerson();
 
         ParseQuery<ParseInstallation> parseInstallationQuery = ParseInstallation.getQuery();
-        parseInstallationQuery.whereEqualTo("username", person.getName());
+        parseInstallationQuery.whereEqualTo("username", person.getPhone());
 
         JSONObject data = new JSONObject();
         try {
