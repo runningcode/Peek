@@ -54,7 +54,11 @@ public class CreatePeekActivity extends FragmentActivity {
             String receiver = extras.getString("username", "");
             if (receiver != null && !"".equals(receiver)) {
                 photo.setReceiver(receiver);
+            } else {
+                finish();
             }
+        } else {
+            finish();
         }
     }
 
