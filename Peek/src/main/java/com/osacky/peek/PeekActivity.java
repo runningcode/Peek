@@ -46,12 +46,10 @@ public class PeekActivity extends ActionBarActivity {
         query.findInBackground(new FindCallback<Person>() {
             @Override
             public void done(List<Person> persons, ParseException e) {
-                if (e != null) {
-                    if (persons.isEmpty()) {
+                if (e == null && persons.isEmpty()) {
                         Person person = new Person();
                         person.setPhone(phoneNumber);
                         person.saveEventually();
-                    }
                 }
             }
         });
