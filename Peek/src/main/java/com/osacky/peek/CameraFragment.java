@@ -13,6 +13,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -29,6 +30,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
     private Camera camera;
     private SurfaceView surfaceView;
     private ParseFile photoFile;
+    //private ImageView bottomImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
@@ -38,6 +40,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
 
         surfaceView = (SurfaceView) v.findViewById(R.id.surface_view);
         surfaceView.setOnClickListener(this);
+
+        //bottomImage = (ImageView) v.findViewById(R.id.bottomImage);
 
         SurfaceHolder holder = surfaceView.getHolder();
         holder.addCallback(this);
@@ -79,6 +83,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
         String fileName = "top.jpg";
 
         photoFile = new ParseFile(fileName, scaledData);
+        //bottomImage.setVisibility(View.INVISIBLE);
         photoFile.saveInBackground(new SaveCallback() {
 
             public void done(ParseException e) {

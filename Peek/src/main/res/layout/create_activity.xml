@@ -19,4 +19,23 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent">-->
+
+        <!--<ImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:id="@+id/topImage"/>-->
+        <!--<ImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:id="@+id/bottomImage"-->
+            <!--android:background="#000000"/>-->
+
+    <!--</LinearLayout>-->
+
+</LinearLayout>
