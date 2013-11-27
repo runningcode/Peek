@@ -44,7 +44,6 @@ public class CreatePeekActivity extends FragmentActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         );
 
-
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.top, new CameraFragment())
                 .commit();
