@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -37,13 +38,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreatePeekActivity"
-            android:parentActivityName="com.osacky.peek.PeekActivity">
+            android:parentActivityName="com.osacky.peek.PeekActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.osacky.peek.PeekActivity">
             </meta-data>
         </activity>
         <service android:name="com.parse.PushService" />
+        <service android:name=".NotificationCountdownService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

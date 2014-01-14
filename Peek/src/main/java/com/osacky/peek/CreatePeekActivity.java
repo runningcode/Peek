@@ -1,16 +1,15 @@
 package com.osacky.peek;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.osacky.peek.Models.Photo;
 import com.parse.ParseAnalytics;
+import com.parse.ParseFile;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -21,31 +20,26 @@ import org.json.JSONObject;
 public class CreatePeekActivity extends FragmentActivity {
 
     private Photo photo;
-    private Bitmap top;
     private String phone;
+    private CameraFragment topCameraFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         photo = new Photo();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_activity);
         ParseAnalytics.trackAppOpened(getIntent());
 
-        phone = Utils.getUserPhoneNumber(getApplicationContext());
+        Intent dismissIntent = new Intent(getApplicationContext(), NotificationCountdownService.class);
+        dismissIntent.setAction(NotificationCountdownService.KILL_NOTIF);
+        startService(dismissIntent);
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        );
+        phone = Utils.getUserPhoneNumber(getApplicationContext());
+        topCameraFragment = new CameraFragment();
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.top, new CameraFragment())
+                .add(R.id.top, topCameraFragment)
                 .commit();
 
         photo.setSender(phone);
@@ -92,16 +86,14 @@ public class CreatePeekActivity extends FragmentActivity {
         return photo;
     }
 
-    public void setTop(Bitmap bitmap) {
-        top = bitmap;
-    }
-
-    public void swapCamera() {
+    public void swapCamera(ParseFile photoParseFile, Bitmap preview) {
+        getCurrentPhoto().setTop(photoParseFile);
+        getSupportFragmentManager().beginTransaction().remove(topCameraFragment).commit();
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.top);
         frameLayout.removeAllViews();
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageBitmap(top);
+        imageView.setImageBitmap(preview);
         frameLayout.addView(imageView);
         getSupportFragmentManager().beginTransaction().add(R.id.bottom, new FrontCameraFragment()).commit();
     }

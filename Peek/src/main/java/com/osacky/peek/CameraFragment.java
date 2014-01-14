@@ -6,7 +6,6 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -24,8 +23,6 @@ import java.io.IOException;
 
 public class CameraFragment extends Fragment implements View.OnClickListener, Callback {
 
-    public static final String TAG = "CameraFragment";
-
     private Camera camera;
     private SurfaceView surfaceView;
     private ParseFile photoFile;
@@ -33,7 +30,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
                              Bundle savedInstanceState) {
-        setRetainInstance(true);
         View v = inflater.inflate(R.layout.camera_fragment, parent, false);
 
         surfaceView = (SurfaceView) v.findViewById(R.id.surface_view);
@@ -87,11 +83,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
                             "Error saving: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 } else {
-                    ((CreatePeekActivity) getActivity()).getCurrentPhoto().setTop(
-                            photoFile);
-                    ((CreatePeekActivity) getActivity()).setTop(rotatedScaledMealImage);
-                    getActivity().getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
-                    ((CreatePeekActivity) getActivity()).swapCamera();
+                    CreatePeekActivity createPeekActivity = (CreatePeekActivity) getActivity();
+                    createPeekActivity.getSupportFragmentManager().beginTransaction().remove(CameraFragment.this).commit();
+                    createPeekActivity.swapCamera(photoFile, rotatedScaledMealImage);
                 }
             }
         });
@@ -104,7 +98,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
             try {
                 camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
             } catch (Exception e) {
-                Log.i(TAG, "No camera: " + e.getMessage());
+                e.printStackTrace();
                 Toast.makeText(getActivity(), "No camera detected",
                         Toast.LENGTH_LONG).show();
             }
@@ -152,7 +146,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ca
                 camera.startPreview();
             }
         } catch (IOException e) {
-            Log.e(TAG, "Error setting up preview", e);
+            e.printStackTrace();
         }
     }
 

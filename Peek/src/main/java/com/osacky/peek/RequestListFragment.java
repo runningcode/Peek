@@ -8,13 +8,6 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.osacky.peek.Models.Contact;
-import com.osacky.peek.Models.Person;
-import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -24,6 +17,7 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        setRetainInstance(true);
         contactsListAdapter = new ContactsListAdapter(getActivity());
         setListAdapter(contactsListAdapter);
         getActivity().getSupportLoaderManager().initLoader(0, null, this).forceLoad();
@@ -45,31 +39,20 @@ public class RequestListFragment extends ListFragment implements LoaderManager.L
         } else {
             setListShownNoAnimation(true);
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!contactsListAdapter.isEmpty()) {
+            setListShown(true);
+        }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Person person = contactsListAdapter.getItem(position).getPerson();
-
-        ParseQuery<ParseInstallation> parseInstallationQuery = ParseInstallation.getQuery();
-        parseInstallationQuery.whereEqualTo("username", person.getPhone());
-
-        JSONObject data = new JSONObject();
-        try {
-            data.put("action", "com.osacky.peek.create");
-            data.put("username", Utils.getUserPhoneNumber(getActivity()));
-            data.put("time", System.currentTimeMillis());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        ParsePush push = new ParsePush();
-        push.setQuery(parseInstallationQuery);
-        push.setData(data);
-        push.sendInBackground();
-
-        v.setBackgroundResource(R.color.green);
+        String phone = contactsListAdapter.getItem(position).getPerson().getPhone();
+        contactsListAdapter.addSentTime(phone, v);
     }
 
     @Override

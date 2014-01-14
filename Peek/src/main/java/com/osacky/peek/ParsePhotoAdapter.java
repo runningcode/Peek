@@ -33,7 +33,7 @@ public class ParsePhotoAdapter extends ParseQueryAdapter<Photo> {
     private WeakHashMap<Long, Bitmap> topMap;
     private WeakHashMap<Long, Bitmap> bottomMap;
 
-    public ParsePhotoAdapter(Context context, QueryFactory queryFactory) {
+    public ParsePhotoAdapter(Context context, QueryFactory<Photo> queryFactory) {
         super(context, queryFactory);
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

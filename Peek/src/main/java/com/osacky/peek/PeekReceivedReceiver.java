@@ -27,7 +27,7 @@ import java.util.Map;
 public class PeekReceivedReceiver extends BroadcastReceiver {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         try {
             JSONObject jsonObject = new JSONObject(intent.getExtras().getString("com.parse.Data"));
 
@@ -57,8 +57,18 @@ public class PeekReceivedReceiver extends BroadcastReceiver {
                 if (contacts.containsKey(username)) {
                     Contact contact = contacts.get(username);
                     builder.setContentText(contact.getName());
+                    builder.setTicker("You got a peek from " + contact.getName());
                     try {
                         Bitmap userImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(contact.getPhotoURI()));
+                        int width = (int) context.getResources().getDimension(android.R.dimen.notification_large_icon_width);
+                        int height = (int) context.getResources().getDimension(android.R.dimen.notification_large_icon_height);
+                        // this is to fix a samsung bug
+                        if (width > height) {
+                            userImage = Bitmap.createScaledBitmap(userImage, width, width, false);
+                        } else {
+                            userImage = Bitmap.createScaledBitmap(userImage, height, height, false);
+                        }
+                        userImage = Bitmap.createScaledBitmap(userImage, width, height, false);
                         builder.setLargeIcon(userImage);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -72,6 +82,8 @@ public class PeekReceivedReceiver extends BroadcastReceiver {
             notificationManager.notify(0, builder.build());
 
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
