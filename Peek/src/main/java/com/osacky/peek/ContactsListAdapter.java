@@ -2,6 +2,7 @@ package com.osacky.peek;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,19 +36,27 @@ public class ContactsListAdapter extends ArrayAdapter<Contact> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.user_item, parent, false);
+            viewHolder = new ViewHolder();
+            assert convertView != null;
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.image);
+            viewHolder.textView = (TextView) convertView.findViewById(R.id.name);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         Contact contact = getItem(position);
 
         if (contact != null) {
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.image);
-            TextView textView = (TextView) convertView.findViewById(R.id.name);
             if (contact.getPhotoURI() != null) {
-                imageView.setImageURI(Uri.parse(contact.getPhotoURI()));
+                viewHolder.imageView.setImageURI(Uri.parse(contact.getPhotoURI()));
             }
-            textView.setText(contact.getName());
+            viewHolder.textView.setText(contact.getName());
         }
         return convertView;
     }
@@ -61,7 +70,7 @@ public class ContactsListAdapter extends ArrayAdapter<Contact> {
         }
     }
 
-    public void addSentTime(String phone, View v) {
+    public void addSentTime(String phone, View v, int position) {
         if (sentTimes.containsKey(phone)) {
             if (sentTimes.get(phone) - System.currentTimeMillis() < TimeUnit.MINUTES.toMillis(10)) {
                 return;
@@ -88,8 +97,31 @@ public class ContactsListAdapter extends ArrayAdapter<Contact> {
         push.setQuery(parseInstallationQuery);
         push.setData(data);
         push.sendInBackground();
+    }
 
-        return;
+    private static class ViewHolder {
+        ImageView imageView;
+        TextView textView;
+        ViewFlipper viewFlipper;
+        CountDownTimer countDownTimer;
+    }
 
+    class RequestCountDownTimer extends CountDownTimer {
+
+        int position;
+
+        public RequestCountDownTimer(long millisInFuture, int position) {
+            super(millisInFuture, 60 * 1000);
+            this.position = position;
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
     }
 }

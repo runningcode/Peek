@@ -143,12 +143,6 @@ public class NotificationCountdownService extends Service {
         editor.commit();
     }
 
-    private void closeNotificationShade() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        sendBroadcast(intent);
-    }
-
     private void readFromSharedPrefs() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
                 getApplicationContext());
