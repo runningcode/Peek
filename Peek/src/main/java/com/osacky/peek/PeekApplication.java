@@ -26,7 +26,6 @@ public class PeekApplication extends Application {
         PushService.setDefaultPushCallback(this, PeekActivity.class);
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
         parseInstallation.put("modelNumber", Build.MODEL);
-        parseInstallation.put("serial", Build.SERIAL);
         parseInstallation.put("deviceName", Build.MANUFACTURER + " " + Build.PRODUCT);
         parseInstallation.saveEventually();
     }

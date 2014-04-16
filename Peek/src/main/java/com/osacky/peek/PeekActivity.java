@@ -3,6 +3,7 @@ package com.osacky.peek;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,11 +18,12 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.List;
 import java.util.Locale;
 
-public class PeekActivity extends ActionBarActivity {
+public class PeekActivity extends ActionBarActivity implements LoginFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,11 @@ public class PeekActivity extends ActionBarActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
 
         final String phoneNumber = Utils.getUserPhoneNumber(getApplicationContext());
+
+        if (ParseUser.getCurrentUser() == null) {
+            DialogFragment dialogFragment = LoginFragment.newInstance(false);
+            dialogFragment.show(getSupportFragmentManager(), "login");
+        }
 
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
         parseInstallation.put("username", phoneNumber);
@@ -53,6 +60,14 @@ public class PeekActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onFragmentLogin() {
+        if (ParseUser.getCurrentUser() == null) {
+            DialogFragment loginFragment = LoginFragment.newInstance(false);
+            loginFragment.show(getSupportFragmentManager(), "login");
+        }
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
